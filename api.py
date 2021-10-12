@@ -6,6 +6,8 @@ import socket
 import sys
 from datetime import datetime
 
+from python3_anticaptcha import ImageToTextTask
+
 import matplotlib.pyplot as plt
 import requests
 from PIL import Image
@@ -89,10 +91,12 @@ class Client101:
                 captcha = input("Answer: ")
                 plt.close(1)
             else:
-                answer = ImageCaptcha.ImageCaptcha(service_type="rucaptcha",
-                                                   rucaptcha_key=config.RUCAPTCHA_KEY).captcha_handler(captcha_link=url)
-                captcha = answer.get("captchaSolve")
+                answer = ImageToTextTask.ImageToTextTask(anticaptcha_key = config.RUCAPTCHA_KEY).captcha_handler(captcha_link=url)
+                logger.info(f"[{self._type.upper()}] ANSWER {answer}")
+                res = answer.get('solution')
+                captcha = res.get("text")
                 captchaId = answer.get("taskId")
+                logger.info(f"[{self._type.upper()}] {captcha} {captchaId}")
 
         name = utils.get_random_name()
         self.sock.sendall(
@@ -212,6 +216,20 @@ class Client101:
         data = self.sock.recv(4096).decode()
         logger.debug(data)
         logger.info(f"[{self._type.upper()}] Game over")
+     
+    def buy_points(self):
+        self.sock.sendall(
+        utils.marshal(
+                {
+                    "command": "buy_points",
+                    "id": "com.rstgames.101.points.0"                    
+                }
+            ).encode()
+        )
+        data = self.sock.recv(4096).decode()
+        logger.info(data)
+        logger.info(f"[{self._type.upper()}] Buy Points")
+        
 
     def getMessagesUpdate(self):
         messages = utils.unMarshal(self.sock.recv(1024).decode())

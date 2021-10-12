@@ -3,4 +3,5 @@ requests
 Pillow
 Faker
 python-rucaptcha
+python3-anticaptcha
 loguru

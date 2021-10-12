@@ -34,7 +34,7 @@ def start():
         while not _id1:
             _id1 = main.getMessagesUpdate()
         main.acceptFriendRequest(_id1)
-        for bet in [2500, 1000, 1000]:
+        for bet in [100, 5000]:
             pwd = bot.createGame(bet)
             bot.inviteToGame()
             _id = ''
@@ -44,7 +44,10 @@ def start():
             bot.ready()
             main.ready()
             time.sleep(.5)
-            bot.exit()
+            if bet == 100:
+                main.exit()
+            else:
+                bot.exit()
             time.sleep(.5)
             main.leave(_id)
             bot.leave(_id)
